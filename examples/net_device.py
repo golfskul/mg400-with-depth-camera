@@ -27,6 +27,10 @@ from pyorbbecsdk import (Pipeline, Context, Config, OBSensorType, OBFormat, OBEr
 from utils import frame_to_bgr_image
 
 ESC_KEY = 27
+# Gemini 335Le
+GEMINI_335LE_PRODUCT_ID = 0x080E
+# Gemini 435Le
+GEMINI_435LE_PRODUCT_ID = 0x0815
 
 def get_stream_profile(pipeline, sensor_type, width, height, fmt, fps):
     profile_list = pipeline.get_stream_profile_list(sensor_type)
@@ -93,13 +97,28 @@ def main():
     config = Config()
     pipeline = Pipeline(device)
 
-    # Set up 4K capture
-    color_profile = get_stream_profile(pipeline, OBSensorType.COLOR_SENSOR, 3840, 2160, OBFormat.H264, 25)
-    config.enable_stream(color_profile)
+    device_info = device.get_device_info()
+    # Gemini 335Le, Gemini 435Le
+    SUPPORTED_PIDS = {GEMINI_435LE_PRODUCT_ID, GEMINI_335LE_PRODUCT_ID}
+    if device_info.get_pid() in SUPPORTED_PIDS:
+        # Set up 1280*800 capture
+        print("Current device is GEMINI 435Le or GEMINI 335Le, use OBFormat.MJPG")
+        color_profile = get_stream_profile(pipeline, OBSensorType.COLOR_SENSOR, 1280, 800, OBFormat.MJPG, 10)
+    else:
+        # Set up 4K capture
+        color_profile = get_stream_profile(pipeline, OBSensorType.COLOR_SENSOR, 3840, 2160, OBFormat.H264, 25)
 
+    config.enable_stream(color_profile)
     pipeline.start(config)
 
-    color_codec_name = 'h264' if color_profile.get_format() == OBFormat.H264 else 'hevc'
+    # Choose the correct decoder based on the format
+    if color_profile.get_format() == OBFormat.H264:
+        color_codec_name = 'h264'
+    elif color_profile.get_format() == OBFormat.MJPG:
+        color_codec_name = 'mjpeg'
+    else:
+        color_codec_name = 'hevc'
+
     try:
         decoder = av.codec.CodecContext.create(color_codec_name, 'r')
     except av.AVError as e:
