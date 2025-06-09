@@ -21,7 +21,7 @@ from pyorbbecsdk import *
 ESC_KEY = 27
 
 
-def process_ir_frame(ir_frame):
+def process_ir_frame(ir_frame, is_dual_ir=False):
     if ir_frame is None:
         return None
     ir_frame = ir_frame.as_video_frame()
@@ -53,7 +53,40 @@ def process_ir_frame(ir_frame):
 
     cv2.normalize(ir_data, ir_data, 0, max_data, cv2.NORM_MINMAX, dtype=image_dtype)
     ir_data = ir_data.astype(data_type)
-    return cv2.cvtColor(ir_data, cv2.COLOR_GRAY2RGB)
+    result = cv2.cvtColor(ir_data, cv2.COLOR_GRAY2RGB)
+    
+    if is_dual_ir:
+        # Scale image to 640x400
+        target_width = 640
+        target_height = 400
+
+        aspect_ratio = width / height
+        target_ratio = target_width / target_height
+        
+        # Determine how to scale based on aspect ratio
+        if aspect_ratio > target_ratio:
+            new_width = target_width
+            new_height = int(target_width / aspect_ratio)
+        else:
+            new_height = target_height
+            new_width = int(target_height * aspect_ratio)
+        
+        # Determine whether to enlarge or reduce, and choose the appropriate interpolation method
+        if width > new_width or height > new_height:
+            interpolation = cv2.INTER_AREA
+        else:
+            interpolation = cv2.INTER_CUBIC
+            
+        # Scale
+        scaled = cv2.resize(result, (new_width, new_height), interpolation=interpolation)
+        
+        # Create a black background, place the scaled image on a black background
+        result = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+        x_offset = (target_width - new_width) // 2
+        y_offset = (target_height - new_height) // 2
+        result[y_offset:y_offset+new_height, x_offset:x_offset+new_width] = scaled
+        
+    return result
 
 
 def main():
@@ -87,8 +120,8 @@ def main():
                 left_ir_frame = frames.get_frame(OBFrameType.LEFT_IR_FRAME)
                 right_ir_frame = frames.get_frame(OBFrameType.RIGHT_IR_FRAME)
 
-                left_image = process_ir_frame(left_ir_frame)
-                right_image = process_ir_frame(right_ir_frame)
+                left_image = process_ir_frame(left_ir_frame, True)
+                right_image = process_ir_frame(right_ir_frame, True)
 
                 if left_image is None or right_image is None:
                     continue
