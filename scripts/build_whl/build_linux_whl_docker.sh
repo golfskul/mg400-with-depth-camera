@@ -1,63 +1,85 @@
 #!/bin/bash
+#------------------------------------------------------------------------------
+# Build Script for Pybind11 Project
+#------------------------------------------------------------------------------
+# REQUIREMENTS:
+# 1. One or more Python versions (3.9-3.13) installed in system
+# 2. CMake installed and available in PATH
+#------------------------------------------------------------------------------
+PY_VERSIONS=("3.8" "3.9" "3.10" "3.11" "3.12" "3.13")
 
-# Enter python virtual env
-# source venv/bin/activate
+# Install directories
+rm -rf ./install
 
-# 3.8.20 3.9.21 3.10.16 3.11.11 3.12.9
-for py_version in 3.10.16; do
-    # export current python3 path
-    export PATH=/opt/python/$py_version/bin:$PATH
-    export LD_LIBRARY_PATH=/opt/python/$py_version/lib:$LD_LIBRARY_PATH
+# Prepare install directory
+INSTALL_DIR=./install/lib/pyorbbecsdk
+mkdir -p "$INSTALL_DIR"
 
-    # Remove ./build directory
+# Copy examples, config, requirements
+cp -r ./examples "$INSTALL_DIR"
+cp -r ./config "$INSTALL_DIR"
+cp ./requirements.txt "$INSTALL_DIR"/examples
+
+# build
+for py_version in "${PY_VERSIONS[@]}"; do
+    echo "Building for Python $py_version..."
+    
+    # Clean old build and create
     rm -rf ./build
+    mkdir -p build
+    
+    # python path
+    python_path=$(which python${py_version})
+    if [ ! -x "$python_path" ]; then
+        echo "Python ${py_version} not found, skipping."
+        cd ..
+        continue
+    fi
+    
+    # Installing dependencies...
+    # "$python_path" -m pip install -r ./requirements.txt
 
-    # Create build directory and navigate into it
-    mkdir -p build && cd build
+    # pybind11 dir
+    pybind11_dir=$("$python_path" -m pybind11 --cmakedir 2>/dev/null)
+    if [ -z "$pybind11_dir" ]; then
+        echo "pybind11 not installed for Python ${py_version}, skipping."
+        cd ..
+        continue
+    fi
 
-    # Run CMake
-    cmake -Dpybind11_DIR=$(pybind11-config --cmakedir) ..
+    # Configure and build
+    cd build
+    if ! cmake .. -DPython3_EXECUTABLE="$python_path" -Dpybind11_DIR="$pybind11_dir"; then
+        echo "CMake failed for Python ${py_version}, skipping."
+        cd ..
+        continue
+    fi
 
-    # Build with make using 4 threads
-    make -j$(nproc)
+    if ! make -j"$(nproc)"; then
+        echo "Make failed for Python ${py_version}, skipping."
+        cd ..
+        continue
+    fi
 
-    # Move back to the parent directory
+    make install
+
     cd ..
 
-    # Remove old /install directory and create new /install/lib directory
-    rm -rf ./install
-    mkdir -p ./install/lib/pyorbbecsdk
-
-    # Copy shared objects (*.so) from /build to /install/lib
-    #cp ./build/*.so ./install/lib/
-
-    # Copy all files from /sdk/lib/arm64/ except *.cmake to /install/lib
-    ARCH=$(uname -m)
-    # Define source directory based on architecture
-    if [ "$ARCH" == "aarch64" ]; then
-        SRC_DIR="./sdk/lib/arm64"
-    elif [ "$ARCH" == "x86_64" ]; then
-        SRC_DIR="./sdk/lib/linux_x64"
-    else
-        echo "Unsupported architecture: $ARCH"
-        exit 1
+    # Build wheel
+    if ! "$python_path" setup.py bdist_wheel; then
+        echo "Wheel build failed for Python ${py_version}, skipping."
+        continue
     fi
-    rsync -av --exclude='*.cmake' "$SRC_DIR/" ./install/lib/
 
-    # Copy examples to /install/lib
-    cp -r ./examples ./install/lib/pyorbbecsdk
-    cp -r ./config ./install/lib/pyorbbecsdk
-    cp ./requirements.txt ./install/lib/pyorbbecsdk/examples
-    #cp ./build/*.so ./install/lib/pyorbbecsdk/examples
-    rsync -av --exclude='*.cmake' "$SRC_DIR/" ./install/lib/pyorbbecsdk/examples
+    # # repair whl
+    # if ! auditwheel repair ./dist/*.whl; then
+    #     echo "Auditwheel failed for Python ${py_version}, skipping."
+    # fi
+    
+    # Clean pyorbbec*.so
+    rm -f ./install/lib/pyorbbec*.so
 
-
-    # Run Python setup.py to build a wheel package
-    # CIBW_BUILD="cp310-*" cibuildwheel --platform linux --output-dir wheelhouse
-    python3 setup.py sdist bdist_wheel
-    auditwheel repair ./dist/*.whl
-
-    echo "$py_version whl done!"
+    echo "Python ${py_version} wheel build done"
 done
 
-echo "All whl generated!"
+echo "All whl generated"

@@ -1,91 +1,92 @@
-# Use the manylinux2014_x86_64 image as the base
+# =============================================
+# Multi-Python Version Installation Image
+# https://www.python.org/ftp/python
+# 3.8.20/                                            07-Sep-2024 10:25
+# 3.9.23/                                            03-Jun-2025 19:20
+# 3.10.18/                                           03-Jun-2025 18:59
+# 3.11.13/                                           03-Jun-2025 19:28
+# 3.12.11/                                           03-Jun-2025 17:39
+# 3.13.5/                                            11-Jun-2025 21:35
+# =============================================
+
+# Use the manylinux2014_x86_64 as the base
 FROM quay.io/pypa/manylinux2014_x86_64
+
+# Define Python versions to install
+# [important]Modify PATH and LD_LIBRARY_PATH when changing python version
+ENV PY_VERSIONS="3.8.20 3.9.23 3.10.18 3.11.13 3.12.11 3.13.5"
 
 # Set non-interactive mode to avoid prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update CentOS repo to use Aliyun mirror for faster downloads
-RUN curl -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.cloud.tencent.com/repo/centos7_base.repo
-RUN curl -O /etc/yum.repos.d/epel.repo http://mirrors.cloud.tencent.com/repo/epel-7.repo
-RUN yum clean all && yum makecache
-RUN yum update
+# Replace default source in the Docker container, Use faster mirror
+RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.cloud.tencent.com/repo/centos7_base.repo && \
+	curl -o /etc/yum.repos.d/epel.repo http://mirrors.cloud.tencent.com/repo/epel-7.repo && \
+	yum clean all && yum makecache && yum -y update
 
-# Install necessary dependencies
-RUN yum -y groupinstall "Development Tools"
-RUN yum install -y \
-    zlib-devel \
-    openssl-devel \
-    ncurses-devel \
-    gdbm-devel \
-    libffi-devel \
-    sqlite-devel \
-    git \
-    wget \
-    curl \
-    gcc-c++ \
-    make \
-    && yum clean all
+# Build dependencies
+RUN yum -y groupinstall "Development Tools" && \
+    yum install -y zlib-devel openssl-devel ncurses-devel gdbm-devel libffi-devel sqlite-devel \
+                   git wget curl gcc-c++ make && \
+    yum clean all
 
-# Build openssl 1.1.1 greater
-RUN wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz
-RUN tar -xvzf openssl-1.1.1k.tar.gz
-RUN cd openssl-1.1.1k && ./config --prefix=/usr --openssldir=/usr/local/ssl && make -j$(nproc) && make install && ldconfig
-RUN openssl version
+# Upgrade OpenSSL for modern TLS
+RUN wget https://www.openssl.org/source/openssl-1.1.1k.tar.gz && \
+    tar -xzf openssl-1.1.1k.tar.gz && \
+    cd openssl-1.1.1k && \
+    ./config --prefix=/usr --openssldir=/usr/local/ssl && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    openssl version && \
+    cd .. && rm -rf openssl-1.1.1k*
 
-# Build python3.8 to python3.13 from source
-RUN rm -f /usr/bin/python3*
-RUN rm -rf /opt/python/* 
+# Remove old Python if any
+RUN rm -rf /usr/bin/python3* /opt/python/*
 
-# Install multiple Python versions and their dependencies
-# 3.12.9 3.13.2 has issue
-RUN for py_version in 3.8.20 3.9.21 3.10.16 3.11.11; do \
-    # Build required python version from sources
-    curl -O https://www.python.org/ftp/python/$py_version/Python-$py_version.tgz && \
-    tar xzf Python-$py_version.tgz; \
+# Download all Python sources in one step for better layer caching
+RUN for py in $PY_VERSIONS; do \
+    curl -O https://www.python.org/ftp/python/$py/Python-$py.tgz; \
 done
 
-# RUN for py_version in 3.8.20 3.9.21 3.10.16 3.11.11 3.12.9 3.13.2; do \
-RUN cd Python-3.8.20 && \
-    ./configure --enable-optimizations --with-ssl --enable-shared --enable-static --prefix=/opt/python/3.8.20 && \
+# Build and install all Python versions
+RUN for py in $PY_VERSIONS; do \
+    tar -xzf Python-$py.tgz && \
+    cd Python-$py && \
+    ./configure --enable-optimizations --with-ssl --enable-shared --prefix=/opt/python/$py && \
     make -j$(nproc) && \
-    make altinstall
-RUN cd Python-3.9.21 && \
-    ./configure --enable-optimizations --with-ssl --enable-shared --enable-static --prefix=/opt/python/3.9.21 && \
-    make -j$(nproc) && \
-    make altinstall
-RUN cd Python-3.10.16 && \
-    ./configure --enable-optimizations --with-ssl --enable-shared --enable-static --prefix=/opt/python/3.10.16 && \
-    make -j$(nproc) && \
-    make altinstall
-RUN cd Python-3.11.11 && \
-    ./configure --enable-optimizations --with-ssl --enable-shared --enable-static --prefix=/opt/python/3.11.11 && \
-    make -j$(nproc) && \
-    make altinstall
-
-# Remove python source code for disk save
-RUN for py_version in 3.8.20 3.9.21 3.10.16 3.11.11; do \
-    rm -rf Python-$py_version && \
-    rm -rf Python-$py_version.tgz; \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-$py*; \
 done
 
-RUN for py_version in 3.8.20 3.9.21 3.10.16 3.11.11; do \
-    cd /opt/python/$py_version/bin && \
-    ln -s ./python${py_version%.*} ./python3 && \
-    ln -s ./pip${py_version%.*} ./pip3 && \
-    export PATH=/opt/python/$py_version/bin:$PATH && \
-    export LD_LIBRARY_PATH=/opt/python/$py_version/lib:$LD_LIBRARY_PATH && \
-    python3 --version && \
-    pip3 --version && \
-    pip3 install --upgrade pip && \
-    pip3 install pybind11 wheel cibuildwheel auditwheel; \
+# Add all installed Python versions to PATH and LD_LIBRARY_PATH
+ENV PATH="/opt/python/3.13.5/bin:\
+/opt/python/3.12.11/bin:\
+/opt/python/3.11.13/bin:\
+/opt/python/3.10.18/bin:\
+/opt/python/3.9.23/bin:\
+/opt/python/3.8.20/bin:${PATH}"
+
+ENV LD_LIBRARY_PATH="/opt/python/3.13.5/lib:\
+/opt/python/3.12.11/lib:\
+/opt/python/3.11.13/lib:\
+/opt/python/3.10.18/lib:\
+/opt/python/3.9.23/lib:\
+/opt/python/3.8.20/lib:${LD_LIBRARY_PATH}"
+
+# Create consistent symlinks & install pip tools for all versions
+RUN for py in $PY_VERSIONS; do \
+    py_major_minor=$(echo $py | cut -d. -f1,2); \
+    bin_dir=/opt/python/$py/bin; \
+    cd $bin_dir && \
+    ln -sf python${py_major_minor} python3 && \
+    ln -sf pip${py_major_minor} pip3 && \
+    ./pip3 install --upgrade pip && \
+    ./pip3 install setuptools wheel cibuildwheel auditwheel pybind11==2.11.0 pybind11-global==2.11.0 && \
+    ./pip3 install opencv-python av pygame pynput; \
 done
 
-# Set working directory in the container
+# Define /workspace as the working directory inside the container.
+# All subsequent commands will be executed from this directory.
 WORKDIR /workspace
-
-# Copy your project files into the container
-COPY . /workspace
-
-# Command to run the build script
-CMD ["bash", "./scripts/build_whl/build_linux_whl_docker.sh"]
-

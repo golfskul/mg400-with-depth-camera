@@ -27,34 +27,34 @@ def main():
     config.enable_gyro_stream()
     config.set_frame_aggregate_output_mode(OBFrameAggregateOutputMode.FULL_FRAME_REQUIRE)
     pipeline.start(config)
+
+    frame_counter = 0
+
     while True:
         try:
             frames = pipeline.wait_for_frames(100)
             if frames is None:
                 continue
-            
+            frame_counter += 1
             accel_frame = frames.get_frame(OBFrameType.ACCEL_FRAME)
             accel_frame = accel_frame.as_accel_frame()
-            
-            if accel_frame is not None:
-                accel_index = accel_frame.get_index()
-                if accel_index % 50 == 0:
-                    print("AccelFrame: ts={}".format(accel_frame.get_timestamp()))
-                    print("AccelFrame: x={}, y={}, z={}".format(accel_frame.get_x(), accel_frame.get_y(),accel_frame.get_z()))    
+
+            if accel_frame is not None and frame_counter % 50 == 0:
+                print("AccelFrame: ts={}".format(accel_frame.get_timestamp()))
+                print("AccelFrame: x={}, y={}, z={}".format(accel_frame.get_x(), accel_frame.get_y(), accel_frame.get_z()))
 
             gyro_frame = frames.get_frame(OBFrameType.GYRO_FRAME)
             gyro_frame = gyro_frame.as_gyro_frame()
-            if gyro_frame is not None:
-                gyro_index = gyro_frame.get_index()
-                if gyro_index % 50 == 0:
-                    print("GyroFrame: ts={}".format(gyro_frame.get_timestamp()))
-                    print("GyroFrame: x={}, y={}, z={}".format(gyro_frame.get_x(), gyro_frame.get_y(),gyro_frame.get_z()))  
+
+            if gyro_frame is not None and frame_counter % 50 == 0:
+                print("GyroFrame: ts={}".format(gyro_frame.get_timestamp()))
+                print("GyroFrame: x={}, y={}, z={}".format(gyro_frame.get_x(), gyro_frame.get_y(), gyro_frame.get_z()))
 
             key = cv2.waitKey(1)
             if key == ord('q') or key == ESC_KEY:
-                break            
+                break
         except KeyboardInterrupt:
-            break           
+            break
 
 if __name__ == "__main__":
     main()

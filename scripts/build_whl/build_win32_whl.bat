@@ -1,7 +1,15 @@
-@REM #!/bin/bash
+@echo off
+@REM # Return to the project root directory
+cd /d %~dp0
+cd ..\..
 
-@REM # Enter python virtual env
+@REM # Create a python virtual environment and enter
+call python -m venv ./venv
 call venv\Scripts\activate
+
+@REM # Install required libraries
+call python -m pip install -r requirements.txt
+call python -m pip install setuptools
 
 @REM # Remove ./build directory
 @REM cd ..
@@ -12,7 +20,7 @@ mkdir build
 cd build
 
 @REM # Run CMake
-cmake -Dpybind11_DIR=$(pybind11-config) ..
+cmake -Dpybind11_DIR=./venv/Lib/site-packages/pybind11/share/cmake/pybind11 ..
 
 @REM # Build Release with cmake
 cmake --build . --config Release
@@ -32,13 +40,13 @@ robocopy ./build/Release/ ./install/lib/ *.pyd /E
 robocopy ./sdk/lib/win_x64/ ./install/lib/ /E
 
 @REM # Copy examples to /install/lib
-robocopy ./examples/ ./install/lib/pyorbbecsdk/examples /E
-robocopy ./requirements.txt ./install/lib/pyorbbecsdk/examples
-robocopy ./config ./install/lib/pyorbbecsdk/config /E
+robocopy ./examples/ ./install/lib/pyorbbecsdk/examples /S
+robocopy ./config ./install/lib/pyorbbecsdk/config /S
+copy requirements.txt install\lib\pyorbbecsdk\examples
 
 @REM # Run Python setup.py to build a wheel package
 python setup.py bdist_wheel
 
 @REM # Exit python virtual env
-call deactivate
+@REM call deactivate
 

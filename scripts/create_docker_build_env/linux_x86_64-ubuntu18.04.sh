@@ -1,1 +1,1 @@
-docker build -t pyorbbecsdk-env.linux_x86_64-multipython -f ./docker/build_env/linux_x86_64-ubuntu1804.dockerfile .
+docker build -t pyorbbecsdk-env.x86_64 -f ./docker/build_env/linux_x86_64-ubuntu1804.dockerfile .
