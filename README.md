@@ -142,6 +142,7 @@ Here is the device support list of main branch (v1.x) and v2-main branch (v2.x):
 
 | **Products List** | **Minimal Firmware Version** |
 |-------------------|------------------------------|
+| Gemini 435Le        | 1.2.04                       |
 | Gemini 335Le        | 1.5.31                       |
 | Gemini 330        | 1.2.20                       |
 | Gemini 330L       | 1.2.20                       |
