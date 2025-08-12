@@ -1,4 +1,21 @@
-# Linux Python SDK Compilation
+# Build from Source
+
+Before you start: Normally, installing with the provided .whl package is sufficient. If the installation fails or you need custom features, you can build the Python Wrapper from source.
+
+## Environment
+
+### Compilation Platform Requirements
+
+- Windows: Visual Studio 2017 and above
+- Linux: gcc 5.4.0 and above
+- cmake: 3.15.0 and above
+- pybind11 2.10.3 and above
+
+### Python Version
+
+- Python 3.6.9 and above
+
+## Linux Python SDK Compilation
 
 This section provides a comprehensive guide to installing, compiling, and running the Orbbec SDK for Python, covering all necessary steps for setup.
 
@@ -17,10 +34,11 @@ Clone the repository to get the latest version:
 
 ```bash
 git clone   https://github.com/orbbec/pyorbbecsdk.git
+cd pyorbbecsdk
 git checkout v2-main
 ```
 
-## Install Dependencies (Ubuntu)
+### Install Dependencies (Ubuntu)
 
 Install the necessary Python development packages
 
@@ -28,7 +46,7 @@ Install the necessary Python development packages
 sudo apt-get install python3-dev python3-venv python3-pip python3-opencv
 ```
 
-## Custom Python Path (Optional)
+### Custom Python Path (Optional)
 
 If you use Anaconda, update the Python path in `pyorbbecsdk/CMakeLists.txt` before the `find_package(Python3 REQUIRED COMPONENTS Interpreter Development)` line:
 
@@ -37,7 +55,7 @@ set(Python3_ROOT_DIR "/home/anaconda3/envs/py3.6.8") # Replace with your Python 
 set(pybind11_DIR "${Python3_ROOT_DIR}/lib/python3.6/site-packages/pybind11/share/cmake/pybind11") # Replace with your Pybind11 path
 ```
 
-## Build the Project
+### Build the Project
 
 Create a virtual environment and build the project:
 
@@ -53,7 +71,7 @@ make -j4
 make install
 `````
 
-## Run the Examples
+### Run the Examples
 
 Set up the environment and run the examples:
 
@@ -62,11 +80,11 @@ cd pyorbbecsdk
 export PYTHONPATH=$PYTHONPATH:$(pwd)/install/lib/
 sudo bash ./scripts/install_udev_rules.sh
 sudo udevadm control --reload-rules && sudo udevadm trigger
-python3 examples/depth_viewer.py
+python3 examples/depth.py
 python3 examples/net_device.py # Requires ffmpeg installation for network devices
 ```
 
-## Generate Python Stubs
+### Generate Python Stubs
 
 Generate stubs for better IntelliSense support in your IDE
 
@@ -76,7 +94,7 @@ pip3 install pybind11-stubgen
 pybind11-stubgen pyorbbecsdk
 ```
 
-## Making a Python Wheel
+### Making a Python Wheel
 
 To generate a wheel package for easy distribution
 
@@ -96,15 +114,17 @@ python3 setup.py bdist_wheel
 pip3 install dist/*.whl
 ```
 
-# Windows Python SDK Compilation
+## Windows Python SDK Compilation
 
-## Download the Python SDK Source Code
+### Download the Python SDK Source Code
 
 ```python
 git clone https://github.com/orbbec/pyorbbecsdk.git
+cd pyorbbecsdk
+git checkout v2-main
 ```
 
-## Install Dependencies
+### Install Dependencies
 
 ```python
 pip3 install -r requirements.txt
@@ -113,7 +133,7 @@ pip3 install -r requirements.txt
 Here, it is assumed that you have installed Python 3 correctly. If you have not installed Python 3, you can refer to
 the [Python official website](https://www.python.org/downloads/) and choose your Python 3 version for installation.
 
-## Configure Visual Studio Project
+### Configure Visual Studio Project
 
 * Open Cmake, set the source code path, and set the "build" folder as the path for generating binary files, as shown in
   the following figure.
@@ -126,7 +146,7 @@ the [Python official website](https://www.python.org/downloads/) and choose your
   Click "Generate", as shown below:
   ![Multi_camera1](../image/Win_Config_image3.png)
 
-## Compile the Python SDK
+### Compile the Python SDK
 
     You can open the Python SDK project in two ways:
 
@@ -156,7 +176,7 @@ Method 1: Use Cmake, click the "Open Project" button, and open the Visual Studio
   Copy the files in the install/lib directory to the examples directory, as shown below:
   ![Multi_camera1](../image/Win_Config_image10.png)
 
-## Test Examples
+### Test Examples
 
-In the examples directory, execute test examples such as python ColorViewer.py, as shown below:
+In the examples directory, execute test examples such as python color.py, as shown below:
   ![Multi_camera1](../image/Win_Config_image11.png)

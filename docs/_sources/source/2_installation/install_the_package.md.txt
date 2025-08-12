@@ -1,0 +1,140 @@
+#  Install from .whl Package
+
+## Linux
+### Prerequisites
+Make sure Python is installed on your local system, and that your Python version is 3.8 or higher.
+
+### Download the Appropriate .whl Package
+Download the .whl installation package that matches your local Python version from the [Python SDK Wrapper Release](https://github.com/orbbec/pyorbbecsdk/releases)
+
+First, check your Python version:
+
+```bash
+python3 --version
+```
+
+For example, if your Python version is 3.11.9, look for a .whl file that matches cp311 and your platform (e.g., Linux x86_64).
+A typical file name will look like:
+
+```bash
+pyorbbecsdk-2.0.13-cp311-cp311-linux_x86_64.whl
+```
+
+### Install the Package
+Navigate to the directory where you downloaded the .whl file and run:
+
+```bash
+python3 -m pip install pyorbbecsdk-2.0.13-cp311-cp311-linux_x86_64.whl
+```
+
+### Verify the Installation
+Check whether the package was installed successfully:
+
+```bash
+python3 -m pip show pyorbbecsdk
+```
+
+If the output shows a Location: field, the package was installed successfully at that path.
+For example:
+
+```bash
+lijie@lijie-orbbec:~$ python3 -m pip show pyorbbecsdk
+
+Name: pyorbbecsdk
+Version: 2.0.13
+Summary: pyorbbecsdk is a python wrapper for the OrbbecSDK
+Location: /home/lijie/.local/lib/python3.11/site-packages
+```
+
+In this example, your site-packages path is:
+
+```bash
+/home/lijie/.local/lib/python3.11/site-packages
+```
+
+### Run the Example
+- Locate the site-packages path
+    Use the output from the previous step to find your_site_packages_path.
+- If you are running an example for the first time, you may need to install additional dependencies.
+Install the example dependencies:
+
+    ```bash
+    python3 -m pip install -r <your_site_packages_path>/pyorbbecsdk/examples/requirements.txt
+    ```
+
+- Run an example
+
+    ```bash
+    cd pyorbbecsdk
+    python3 examples/color.py
+    ```
+
+## Windows
+### Prerequisites
+Make sure Python is installed on your local system, and that your Python version is 3.8 or higher.
+
+### Download the Appropriate .whl Package
+Download the .whl installation package that matches your local Python version from the [Python SDK Wrapper Release](https://github.com/orbbec/pyorbbecsdk/releases)
+
+First, check your Python version:
+
+```bash
+python --version
+```
+
+For example, if your Python version is 3.11.9, look for a .whl file that matches cp311 and your platform (e.g., win x64).
+A typical file name will look like:
+
+```bash
+pyorbbecsdk-2.0.13-cp311-cp311-win_amd64.whl
+```
+
+### Install the Package
+Navigate to the directory where you downloaded the .whl file and run:
+
+```bash
+python -m pip install pyorbbecsdk-2.0.13-cp311-cp311-win_amd64.whl
+```
+
+### Verify the Installation
+Check whether the package was installed successfully:
+
+```bash
+python -m pip show pyorbbecsdk
+```
+
+If the output shows a Location: field, the package was installed successfully at that path.
+For example:
+
+```bash
+C:\Users\Administrator>python -m pip show pyorbbecsdk
+
+Name: pyorbbecsdk  
+Version: 2.0.13  
+Summary: pyorbbecsdk is a python wrapper for the OrbbecSDK  
+Location: C:\Users\Administrator\AppData\Local\Programs\Python\Python311\Lib\site-packages
+```
+
+In this example, your site-packages path is:
+
+```bash
+C:\Users\Administrator\AppData\Local\Programs\Python\Python311\Lib\site-packages
+```
+
+### Run the Example
+- Locate the site-packages path
+    Use the output from the previous step to find your_site_packages_path.
+- If you are running an example for the first time, you may need to install additional dependencies.
+Install the example dependencies:
+
+    ```bash
+    python -m pip install -r <your_site_packages_path>\pyorbbecsdk\examples\requirements.txt
+
+    ```
+
+- Run an example
+
+    ```bash
+    cd pyorbbecsdk
+    python examples/color.py
+    ```

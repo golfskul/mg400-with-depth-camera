@@ -16,8 +16,5 @@ This guide provides instructions on how to utilize the Python Bind SDK to initia
     :caption: This Section Covers:
 
 
-    Data_Stream_acquisition.md
-    Camera_configuration.md
-    Multi_camera_synchronization.md
-    Post-processing_Filter.md
+    ApplicationGuide.md
 

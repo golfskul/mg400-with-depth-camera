@@ -12,7 +12,7 @@ The Python Wrapper primarily includes the following features:
 * Depth work modes (supported by Gemini 2/2L, Astra 2).
 * Presets (supported by Gemini 330 series).
 * Update Firmware .
-* Network functionality (supported by the Femto Mega).
+* Network functionality (supported by the Femto Mega, Gemini 335Le，Gemini 435Le).
 * Record and playback.
 
 # Build your First Camera Application
@@ -20,62 +20,62 @@ The Python Wrapper primarily includes the following features:
 quick_start.py show how to use the SDK to capture video streams with minimal code.
 
 * The data flow diagram for quick start sample is as follows:
-
 ![quick_start](../image/quick_start.png)
 
-* quick start sample introduction
+* Quick start sample introduction
 
-```python
-#  1. Prerequisites
-# compile pyorbbecsdk and  copy the compiled .pyd library and other dependent Orbbec SDK libraries to the examples directory.
+    ```python
+    # 1.Prerequisites
+    # Make sure you have already installed the pyorbbecsdk library in your local Python environment using the steps in Installation above.
 
-from pyorbbecsdk import *
-#2. create pipeline 
-pipeline = Pipeline()
+    from pyorbbecsdk import *
+    # 2.create pipeline 
+    pipeline = Pipeline()
 
-#3. start pipeline
-pipeline.start()
+    # 3.start pipeline
+    pipeline.start()
 
-#4. wait for frames
-frames = pipeline.wait_for_frames(100)
+    # 4.wait for frames
+    frames = pipeline.wait_for_frames(100)
 
-#5. get frames
-color_frame = frames.get_color_frame()
-depth_frame = frames.get_depth_frame()
+    # 5.get frames
+    color_frame = frames.get_color_frame()
+    depth_frame = frames.get_depth_frame()
 
-#6. Render frames using OpenCV
+    # 6.Render frames using OpenCV
 
+    # 7.stop pipeline
+    pipeline.stop()
+    ```
 
-#7. stop pipeline
-pipeline.stop()
-
-```
+    ![quick_start](../image/quick_start_result.png)
 
 # Sample Features
 
 | Example                   | Description                                                                                                                       | Notes                                               | Level  |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------ |
-| enumerate.py              | Use the SDK interface to obtain camera-related information, including model, various sensors, and sensor-related configurations . |                                                     | ⭐     |
-| hot_plug.py               | Demonstrates how to detect hot plug events.                                                                                       |                                                     | ⭐     |
-| logger.py                 | Use the SDK interface to set the log output level and customize the output path.                                                  |                                                     | ⭐     |
-| quick_start.py            | Demonstrates how to use the SDK.                                                                                                  |                                                     | ⭐     |
-| callback.py               | Displays the video stream from the camera using a callback.                                                                       |                                                     | ⭐⭐   |
-| color.py                  | Displays the color stream from the camera.                                                                                        |                                                     | ⭐⭐   |
-| depth.py                  | Displays the depth stream from the camera.                                                                                        |                                                     | ⭐⭐   |
-| imu.py                    | Demonstrates how to read IMU data.                                                                                                |                                                     | ⭐⭐   |
-| infrared.py               | Displays the infrared stream from the camera.                                                                                     |                                                     | ⭐⭐   |
-| multi_device.py           | Demonstrates how to use multiple devices.                                                                                         |                                                     | ⭐⭐   |
-| net_device.py             | Demonstrates how to use network functions.                                                                                        | Supported by Femto Mega and Gemini 2 XL.            | ⭐⭐   |
-|recorder.py                |Demonstrates how to record the streams to a file.        |                      |    ⭐⭐     |
-|playback.py               |Demonstrates how to play back recorded streams.        |                      |    ⭐⭐     |
-|device_optional_depth_presets_update.py| This sample shows how to read a BIN file to perform optional depth presets upgrades on the device. | Supported by Gemini 330 series  | ⭐⭐  |
-| coordinate_transform.py   | Use the SDK interface to transform different coordinate systems.                                                                  |                                                     | ⭐⭐⭐ |
-| device_firmware_update.py | This sample demonstrates how to read a firmware file to perform firmware upgrades on the device.                                  |                                                     | ⭐⭐⭐ |
-| depth_work_mode.py        | Demonstrates how to set the depth work mode.                                                                                      | Supported by Gemini2、Gemini2L、Astra2、Gemini 2 XL | ⭐⭐⭐ |
-| hdr.py                    | In this sample, user can get the HDR merge image. Also supports user to toggle HDR merge and toggle alternate show origin frame.  | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
-| hw_d2c_align.py           | Demonstrates how to use hardware D2C.                                                                                             |                                                     | ⭐⭐⭐ |
-| point_cloud.py            | Demonstrates how to save the point cloud to disk using a point cloud filter.                                                      |                                                     | ⭐⭐⭐ |
-| post_processing.py        | Demonstrates how to use post-processing filters.                                                                                  | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
-| preset.py                 | Use the SDK interface to set and get the preset value.                                                                            | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
-| sync_align.py             | Demonstrates how to use the align filter.                                                                                         |                                                     | ⭐⭐⭐ |
-| two_devices_sync.py       | Demonstrates how to synchronize two devices.                                                                                      |                                                     | ⭐⭐⭐ |
+| [enumerate.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/enumerate.py)              | Use the SDK interface to obtain camera-related information, including model, various sensors, and sensor-related configurations . |                                                     | ⭐     |
+| [hot_plug.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/hot_plug.py)               | Demonstrates how to detect hot plug events.                                                                                       |                                                     | ⭐     |
+| [logger.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/logger.py)                 | Use the SDK interface to set the log output level and customize the output path.                                                  |                                                     | ⭐     |
+| [quick_start.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/quick_start.py)            | Demonstrates how to use the SDK.                                                                                                  |                                                     | ⭐     |
+| [callback.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/callback.py)               | Displays the video stream from the camera using a callback.                                                                       |                                                     | ⭐⭐   |
+| [color.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/color.py)                  | Displays the color stream from the camera.                                                                                        |                                                     | ⭐⭐   |
+| [depth.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/depth.py)                  | Displays the depth stream from the camera.                                                                                        |                                                     | ⭐⭐   |
+| [imu.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/imu.py)                    | Demonstrates how to read IMU data.                                                                                                |                                                     | ⭐⭐   |
+| [infrared.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/infrared.py)               | Displays the infrared stream from the camera.                                                                                     |                                                     | ⭐⭐   |
+| [multi_device.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/multi_device.py)           | Demonstrates how to use multiple devices.                                                                                         |                                                     | ⭐⭐   |
+| [net_device.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/net_device.py)             | Demonstrates how to use network functions.                                                                                        | Supported by Femto Mega and Gemini 2 XL.            | ⭐⭐   |
+|[recorder.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/recorder.py)                |Demonstrates how to record the streams to a file.        |                      |    ⭐⭐     |
+|[playback.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/playback.py)               |Demonstrates how to play back recorded streams.        |                      |    ⭐⭐     |
+|[device_optional_depth_presets_update.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/device_optional_depth_presets_update.py)| This sample shows how to read a BIN file to perform optional depth presets upgrades on the device. | Supported by Gemini 330 series  | ⭐⭐  |
+| [coordinate_transform.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/coordinate_transform.py)   | Use the SDK interface to transform different coordinate systems.                                                                  |                                                     | ⭐⭐⭐ |
+| [device_firmware_update.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/device_firmware_update.py) | This sample demonstrates how to read a firmware file to perform firmware upgrades on the device.                                  |                                                     | ⭐⭐⭐ |
+| [depth_work_mode.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/depth_work_mode.py)        | Demonstrates how to set the depth work mode.                                                                                      | Supported by Gemini2、Gemini2L、Astra2、Gemini 2 XL | ⭐⭐⭐ |
+| [hdr.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/hdr.py)                    | In this sample, user can get the HDR merge image. Also supports user to toggle HDR merge and toggle alternate show origin frame.  | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
+| [hw_d2c_align.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/hw_d2c_align.py)           | Demonstrates how to use hardware D2C.                                                                                             |                                                     | ⭐⭐⭐ |
+| [point_cloud.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/point_cloud.py)            | Demonstrates how to save the point cloud to disk using a point cloud filter.                                                      |                                                     | ⭐⭐⭐ |
+| [post_processing.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/post_processing.py)        | Demonstrates how to use post-processing filters.                                                                                  | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
+| [preset.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/preset.py)                 | Use the SDK interface to set and get the preset value.                                                                            | Supported by the Gemini 330 series.                 | ⭐⭐⭐ |
+| [sync_align.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/sync_align.py)             | Demonstrates how to use the align filter.                                                                                         |                                                     | ⭐⭐⭐ |
+| [two_devices_sync.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/two_devices_sync.py)       | Demonstrates how to synchronize two devices.                                                                                      |                                                     | ⭐⭐⭐ |
+| [object_detection_sw_align.py](https://github.com/orbbec/pyorbbecsdk/blob/v2-main/examples/object_detection/object_detection_sw_align.py)  | Integrate the Orbbec Depth Sensing Camera with the YOLOv5 object detection algorithm for enhanced object detection accuracy and performance.  |   | ⭐⭐⭐ |
