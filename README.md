@@ -175,9 +175,42 @@ Here is the device support list of main branch (v1.x) and v2-main branch (v2.x):
 - Linux ARM32: coming soon
 
 
+## Environment Setup
+
+### windows
+
+
+To get device metadata (this includes things like timestamps and other information about the video frame) through UVC protocol, users need to modify the registry and complete registration first, because Windows system has default limitations.
+
+1. Connect the device and confirm that the device is online;
+2. Open PowerShell with administrator privileges, then use the `cd` command to enter the directory where the obsensor_metadata_win10.ps1 script is located;
+3. Execute the `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` command, and enter `Y` as prompted to confirm;
+   - Try to execute the `Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser` command if the previous command fails in some cases;
+4. Execute `.\obsensor_metadata_win10.ps1 -op install_all` to complete the registration.
+
+`Notes`: Users need to run this script every time a new device is connected. This process can be cumbersome and easy to forget, leading to an inability to obtain the device's metadata.
+
+`Notes:` If the metadata is not registered, the device timestamp will be abnormal, thereby affecting the SDK's internal frame synchronization functionality.
+
+
+### Linux
+
+For Linux, we have provided a script to help you set up the environment. You can run the script as follows:
+
+```bash
+  cd pyorbbecsdk/scripts
+  sudo chmod +x ./install_udev_rules.sh
+  sudo ./install_udev_rules.sh
+  sudo udevadm control --reload && sudo udevadm trigger
+```
+
+*Notes: If this script is not executed, open the device will fail due to permission issues.
+
+## How to Use install package
+First, you need to download the corresponding [.whl installation package](https://github.com/orbbec/pyorbbecsdk/releases) based on your system's Python version. Then refer to [this document](https://orbbec.github.io/pyorbbecsdk/source/2_installation/install_the_package.html#) for installation.
+
 
 ## Documentation
-
 Refer to [UserGuide](https://orbbec.github.io/pyorbbecsdk/index.html) for detailed documentation.
 
 ## License
