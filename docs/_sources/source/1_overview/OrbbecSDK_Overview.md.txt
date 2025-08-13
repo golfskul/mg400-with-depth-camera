@@ -1,6 +1,6 @@
 # Orbbec SDK Overview
 
-This section introduces the Orbbec SDK in C++. Its architecture and concepts are consistent with those of the Python wrapper.
+This section introduces the Orbbec SDK in C++. Its architecture and concepts are consistent with those of the Python Wrapper.
 
 ## Terms
 

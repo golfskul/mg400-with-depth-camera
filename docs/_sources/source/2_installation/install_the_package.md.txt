@@ -5,7 +5,7 @@
 Make sure Python is installed on your local system, and that your Python version is 3.8 or higher.
 
 ### Download the Appropriate .whl Package
-Download the .whl installation package that matches your local Python version from the [Python SDK Wrapper Release](https://github.com/orbbec/pyorbbecsdk/releases)
+Download the .whl installation package that matches your local Python version from the [Python Wrapper Release](https://github.com/orbbec/pyorbbecsdk/releases)
 
 First, check your Python version:
 
