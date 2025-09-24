@@ -1,0 +1,7 @@
+{
+    "IP_ROBOT": "192.168.201.1",
+    "PORT": 6601,
+    "YOLO_MODEL": "Ai_pt_place/grey.pt",
+    "FLIP_IMAGE": true,
+    "SHOW_DEPTH": true
+}

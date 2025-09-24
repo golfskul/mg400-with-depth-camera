@@ -16,7 +16,7 @@
 import cv2
 
 from pyorbbecsdk import *
-from utils import frame_to_bgr_image
+from my_utils import frame_to_bgr_image
 
 ESC_KEY = 27
 

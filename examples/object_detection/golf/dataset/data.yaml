@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['ng', 'pass']
+
+roboflow:
+  workspace: kmutt-2luva
+  project: ggggg-iqgn5
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/kmutt-2luva/ggggg-iqgn5/dataset/1

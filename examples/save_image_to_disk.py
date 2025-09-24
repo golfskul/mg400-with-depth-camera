@@ -19,7 +19,7 @@ import cv2
 import numpy as np
 
 from pyorbbecsdk import *
-from utils import frame_to_bgr_image
+from my_utils import frame_to_bgr_image
 
 
 def save_depth_frame(frame: DepthFrame, index):
@@ -40,7 +40,7 @@ def save_depth_frame(frame: DepthFrame, index):
     save_image_dir = os.path.join(os.getcwd(), "depth_images")
     if not os.path.exists(save_image_dir):
         os.mkdir(save_image_dir)
-    raw_filename = save_image_dir + "/depth_{}x{}_{}_{}.raw".format(width, height, index, timestamp)
+    raw_filename = save_image_dir + "/depth_{}x{}_{}_{}.raws".format(width, height, index, timestamp)
     data.tofile(raw_filename)
 
 

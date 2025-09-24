@@ -19,7 +19,7 @@ import numpy as np
 import time
 
 from pyorbbecsdk import *
-from utils import frame_to_bgr_image
+from my_utils import frame_to_bgr_image
 
 ESC_KEY = 27
 MIN_DEPTH = 20  # 20mm
@@ -61,6 +61,7 @@ def main():
             width = depth_frame.get_width()
             height = depth_frame.get_height()
             scale = depth_frame.get_depth_scale()
+            print(f"Depth Frame: {width}x{height}, Scale: {scale}")
             
             depth_data = np.frombuffer(depth_frame.get_data(), dtype=np.uint16).reshape((height, width))
             depth_data = depth_data.astype(np.float32) * scale
