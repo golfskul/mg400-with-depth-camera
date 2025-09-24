@@ -35,17 +35,5 @@ pip install -r requirements.txt
 python src/test_cal.py
 ```
 
-# Data Preparation
 
-1. Data Collection
-```bash
-python camera_capture.py
-```
-2. Labelling (Roboflow)
-
-3. Train Data
-```bash
-python new_yolov8.ipynb
-```
-```
 
