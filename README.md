@@ -32,7 +32,7 @@ pip install -r requirements.txt
 # 7. Run Program
 ```bash
 .venv\Scripts\activate
-python src/test_cal.py
+python src/examples/object_detection/test_cal.py
 ```
 
 
