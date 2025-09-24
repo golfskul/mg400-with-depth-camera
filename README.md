@@ -2,7 +2,7 @@
 
 # 1. clone project from Github
 ```bash
-git clone 
+git clone https://github.com/golfskul/mg400-with-depth-camera.git
 ```
 # 2. check Python version (Python 3.10.4)
 ```bash
